@@ -2,6 +2,7 @@
 ' by kryton9 - Kent Sarikaya 2017
 ' some functions derived from processing code at
 ' https://github.com/processing/processing/blob/master/core/src/processing/core/PVector.java
+' thanks to Petr Schreiber for contributions to this code
 
 ' methods of this class 
 ' cpy2   : copies this vector to the passed in vector
