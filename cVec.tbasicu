@@ -37,20 +37,12 @@ Type cVec
         vec2 As Boolean ' is this a Vec2 or Vec3, default vec2 is false, auto set when created   
 
     Public  
-        Function _Create ( Optional x As Single, Optional y As Single, Optional z As Single ) 
-            Me.vec2 = FALSE 
-            If Function_CParams = 0 Then
-                Me.x = 0 
-                Me.y = 0
-                Me.z = 0
-                Return
-            End If
+        Function _Create ( Optional x As Single = 0, y As Single = 0, z As Single = 0) 
+            Me.vec2 = (Function_CParams = 2)
+            If Function_CParams = 0 Then Return
+
             Me.x = x
             Me.y = y 
-            If Function_CParams = 2 Then
-                z = 0 
-                Me.vec2 = TRUE  
-            End If
             Me.z = z
         End Function
          
@@ -69,14 +61,10 @@ Type cVec
         End Function
         
         ' assigns all values x, y, z at one time, set is a keyword so used eqls
-        Function eqls ( x As Single, y As Single, Optional z As Single )
-            Me.vec2 = FALSE
+        Function eqls ( x As Single, y As Single, Optional z As Single = 0)
+            Me.vec2 = (Function_CParams = 2)
             Me.x = x
             Me.y = y 
-            If Function_CParams = 2 Then
-                z = 0 
-                Me.vec2 = TRUE  
-            End If
             Me.z = z
         End Function
         
@@ -109,7 +97,7 @@ Type cVec
                 Me.x /= divideByThis
                 Me.y /= divideByThis 
                 Me.z /= divideByThis
-             End If   
+            End If   
         End Function
         
         ' returns the dot product of this vector and the passed in vector
@@ -172,7 +160,7 @@ Type cVec
                 Return 0
             End If
         End Function
-        
+
         ' returns the angle between this vector and the passed in vector
         Function angle ( v2 As cVec ) As Single
             If ( Me.x = 0 And Me.y = 0 And Me.z = 0 ) Then Return 0.0
@@ -184,9 +172,9 @@ Type cVec
             If (amt <= -1) Then
                 Return Pi
             ElseIf amt >= 1 Then
-              Return 0;
+              Return 0
             End If 
-            'PrintL "amount is: " + amt
+
             Return RadToDeg ArcCos amt  
         End Function
     
@@ -199,74 +187,22 @@ Type cVec
 
         ' returns formatted string values of this vector
         Function txt ( Optional numDecimals As Byte ) As String
-            If numDecimals = "" Then numDecimals = 6 
+            If numDecimals = 0 Then numDecimals = 6
+            string mask = "#." + repeat$(numDecimals, "0")
+             
             If Me.vec2 Then
-                Select Case numDecimals               
-                    Case 1
-                        Return Format$(Me.x, "#.0") + ", " + Format$(Me.y, "#.0")
-                    Case 2
-                        Return Format$(Me.x, "#.00") + ", " + Format$(Me.y, "#.00")
-                    Case 3
-                        Return Format$(Me.x, "#.000") + ", " + Format$(Me.y, "#.000")
-                    Case 4 
-                        Return Format$(Me.x, "#.0000") + ", " + Format$(Me.y, "#.0000")
-                    Case 5 
-                        Return Format$(Me.x, "#.00000") + ", " + Format$(Me.y, "#.00000")
-                    Case Else ' 6 and above default to 6
-                        Return Format$(Me.x, "#.000000") + ", " + Format$(Me.y, "#.000000")
-                End Select
+              Return Format$(Me.x, mask) + ", " + Format$(Me.y, mask)
             Else
-                Select Case numDecimals               
-                    Case 1
-                        Return Format$(Me.x, "#.0") + ", " + Format$(Me.y, "#.0") + ", " + Format$(Me.z, "#.0") 
-                    Case 2
-                        Return Format$(Me.x, "#.00") + ", " + Format$(Me.y, "#.00") + ", " + Format$(Me.z, "#.00")
-                    Case 3
-                        Return Format$(Me.x, "#.000") + ", " + Format$(Me.y, "#.000") + ", " + Format$(Me.z, "#.000")
-                    Case 4 
-                        Return Format$(Me.x, "#.0000") + ", " + Format$(Me.y, "#.0000") + ", " + Format$(Me.z, "#.0000")
-                    Case 5 
-                        Return Format$(Me.x, "#.00000") + ", " + Format$(Me.y, "#.00000") + ", " + Format$(Me.z, "#.00000")
-                    Case Else ' 6 and above default to 6
-                        Return Format$(Me.x, "#.000000") + ", " + Format$(Me.y, "#.000000") + ", " + Format$(Me.z, "#.000000")
-                End Select 
-            EndIf
+              Return Format$(Me.x, mask) + ", " + Format$(Me.y, mask) + ", " + Format$(Me.z, mask)
+            End If
         End Function
         
         ' prints formatted values of this vector
         Function out ( Optional numDecimals As Byte ) As Boolean
-            If numDecimals = "" Then numDecimals = 6 
-            If Me.vec2 Then
-                Select Case numDecimals               
-                    Case 1
-                        PrintL Format$(Me.x, "#.0") + ", " + Format$(Me.y, "#.0")
-                    Case 2
-                        PrintL Format$(Me.x, "#.00") + ", " + Format$(Me.y, "#.00")
-                    Case 3
-                        PrintL Format$(Me.x, "#.000") + ", " + Format$(Me.y, "#.000")
-                    Case 4 
-                        PrintL Format$(Me.x, "#.0000") + ", " + Format$(Me.y, "#.0000")
-                    Case 5 
-                        PrintL Format$(Me.x, "#.00000") + ", " + Format$(Me.y, "#.00000")
-                    Case Else ' 6 and above default to 6
-                        PrintL Format$(Me.x, "#.000000") + ", " + Format$(Me.y, "#.000000")
-                End Select
-            Else
-                Select Case numDecimals               
-                    Case 1
-                        PrintL Format$(Me.x, "#.0") + ", " + Format$(Me.y, "#.0") + ", " + Format$(Me.z, "#.0") 
-                    Case 2
-                        PrintL Format$(Me.x, "#.00") + ", " + Format$(Me.y, "#.00") + ", " + Format$(Me.z, "#.00")
-                    Case 3
-                        PrintL Format$(Me.x, "#.000") + ", " + Format$(Me.y, "#.000") + ", " + Format$(Me.z, "#.000")
-                    Case 4 
-                        PrintL Format$(Me.x, "#.0000") + ", " + Format$(Me.y, "#.0000") + ", " + Format$(Me.z, "#.0000")
-                    Case 5 
-                        PrintL Format$(Me.x, "#.00000") + ", " + Format$(Me.y, "#.00000") + ", " + Format$(Me.z, "#.00000")
-                    Case Else ' 6 and above default to 6
-                        PrintL Format$(Me.x, "#.000000") + ", " + Format$(Me.y, "#.000000") + ", " + Format$(Me.z, "#.000000")
-                End Select 
-            EndIf 
+            If numDecimals = 0 Then numDecimals = 6
+            
+            PrintL me.txt(numDecimals)
+            
             Return TRUE
         End Function 
         
