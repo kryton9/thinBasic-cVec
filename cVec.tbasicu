@@ -1,0 +1,283 @@
+' cVec a math vector class
+' by kryton9 - Kent Sarikaya 2017
+' some functions derived from processing code at
+' https://github.com/processing/processing/blob/master/core/src/processing/core/PVector.java
+
+' methods of this class 
+' cpy2   : copies this vector to the passed in vector
+' cpyFrm : copies to this vector from the passed in vector 
+' eqls   : assigns all values x, y, z at one time
+' inc    : adds the passed in vector to this vector
+' dec    : subtracts the passed in vector from this vector
+' scl    : scales this vector by the value passed in 
+' div    : divides this vector by the value passed in
+' dot    : returns the dot product of this vector and the passed in vector
+' dstnc  : returns the distance between this vector and the passed in vector
+' cross  : assigns the cross product between this vector and the passed in vector
+' limit  : limits the magnitude of this vector
+' mag    : returns the magnitude ( length ) of this vector
+' nrmlz  : normalize this vector 
+' rndmz  : randomizes this vector to random unit vector
+' hdng   : returns the heading angle of this vector
+' angle  : returns the angle between this vector and the passed in vector
+' rot    : rotates this vector by the angle passed in
+' txt    : returns formatted string values of this vector
+' out    : prints formatted values of this vector
+' setMag : set the magnitude of this vector 
+' frmAngle : set this vector to this angle
+ 
+Uses "math"
+
+Type cVec
+    Public
+        x As Single
+        y As Single
+        z As Single 
+    Private 
+        vec2 As Boolean ' is this a Vec2 or Vec3, default vec2 is false, auto set when created   
+
+    Public  
+        Function _Create ( Optional x As Single, Optional y As Single, Optional z As Single ) 
+            Me.vec2 = FALSE 
+            If Function_CParams = 0 Then
+                Me.x = 0 
+                Me.y = 0
+                Me.z = 0
+                Return
+            End If
+            Me.x = x
+            Me.y = y 
+            If Function_CParams = 2 Then
+                z = 0 
+                Me.vec2 = TRUE  
+            End If
+            Me.z = z
+        End Function
+         
+        ' copies this vector to the passed in vector  
+        Function cpy2 ( ByRef vecToCopyTo As cVec )   
+            vecToCopyTo.x = Me.x
+            vecToCopyTo.y = Me.y 
+            vecToCopyTo.z = Me.z   
+        End Function 
+        
+        ' copies to this vector from the passed in vector  
+        Function cpyFrm ( copyFromVec As cVec )   
+            Me.x = copyFromVec.x
+            Me.y = copyFromVec.y
+            Me.z = copyFromVec.z   
+        End Function
+        
+        ' assigns all values x, y, z at one time, set is a keyword so used eqls
+        Function eqls ( x As Single, y As Single, Optional z As Single )
+            Me.vec2 = FALSE
+            Me.x = x
+            Me.y = y 
+            If Function_CParams = 2 Then
+                z = 0 
+                Me.vec2 = TRUE  
+            End If
+            Me.z = z
+        End Function
+        
+        ' adds the passed in vector to this vector
+        ' add is a keyword can't use, so used inc 
+        Function inc ( vecToAdd As cVec )   
+            Me.x += vecToAdd.x
+            Me.y += vecToAdd.y 
+            Me.z += vecToAdd.z   
+        End Function
+        
+        ' subtracts the passed in vector from this vector 
+        ' sub is a keyword can't use, so used dec
+        Function dec ( vecToSub As cVec )   
+            Me.x -= vecToSub.x
+            Me.y -= vecToSub.y 
+            Me.z -= vecToSub.z   
+        End Function
+        
+        ' scales this vector by the value passed in
+         Function scl ( scaleByThis As Single )   
+            Me.x *= scaleByThis
+            Me.y *= scaleByThis 
+            Me.z *= scaleByThis   
+        End Function
+        
+        ' divides this vector by the value passed in
+        Function div ( divideByThis As Single )
+            If divideByThis <> 0 Then   
+                Me.x /= divideByThis
+                Me.y /= divideByThis 
+                Me.z /= divideByThis
+             End If   
+        End Function
+        
+        ' returns the dot product of this vector and the passed in vector
+        Function dot (otherVec As cVec) As Single
+            Return Me.x * otherVec.x + Me.y * otherVec.y + Me.z * otherVec.z
+        End Function 
+        
+        ' returns the distance between this vector and the passed in vector
+        ' dist is s keyword so used dstnc
+        Function dstnc ( otherVec As cVec ) As Single  
+            Single dx = Me.x - otherVec.x
+            Single dy = Me.y - otherVec.y
+            Single dz = Me.z - otherVec.z
+            Return Sqr ( dx * dx + dy * dy + dz * dz)
+        End Function
+        
+        ' the vector: result contains the cross product between this vector
+        ' And the passed in vector: otherVec
+        Function cross( otherVec As cVec, ByRef result As cVec )
+            result.x = Me.y * otherVec.z - otherVec.y * Me.z
+            result.y = Me.z * otherVec.x - otherVec.z * Me.x
+            result.z = Me.x * otherVec.y - otherVec.x * Me.y
+        End Function
+        
+        ' limits the magnitude of this vector
+         Function limit ( limitMax As Single )
+            If ( Me.mag > limitMax) Then
+                Me.nrmlz
+                Me.scl limitMax
+            End If
+         End Function
+         
+        ' returns the magnitude ( length ) of this vector 
+        Function mag ( ) As Single   
+            Return Sqr ( Me.x * Me.x + Me.y * Me.y + Me.z * Me.z )    
+        End Function
+        
+        ' normalize this vector
+        Function nrmlz ( )
+            Single mag = Me.mag 
+            If mag = 0 Then Return  
+            Me.x /= mag
+            Me.y /= mag
+            Me.z /= mag
+        End Function 
+        
+        ' randomizes this vector to random unit vector
+        Function rndmz ( )
+            Single angle = Rnd() * Pi * 2
+            Me.z = Rnd * 2 - 1 
+            Me.x = Sqr ( 1 - Me.z * Me.z ) * Cos ( angle )
+            Me.y = Sqr ( 1 - Me.z * Me.z ) * Sin ( angle )
+        End Function   
+        
+        ' meant for 2d vectors, returns the heading angle of this vector, ignores z in 3d vectors
+        Function hdng ( ) As Single 
+            If Me.z = 0 Then
+                Return DegToRad ( ATAN2 ( Me.y, Me.x ) )
+            Else
+                Return 0
+            End If
+        End Function
+        
+        ' returns the angle between this vector and the passed in vector
+        Function angle ( v2 As cVec ) As Single
+            If ( Me.x = 0 And Me.y = 0 And Me.z = 0 ) Then Return 0.0
+            If ( v2.x = 0 And v2.y = 0 And v2.z = 0 ) Then Return 0.0            
+            Double dot = Me.x * v2.x + Me.y * v2.y + Me.z * v2.z
+            Double v1mag = Me.mag
+            Double v2mag = v2.mag
+            Double amt = dot / ( v1mag * v2mag )
+            If (amt <= -1) Then
+                Return Pi
+            ElseIf amt >= 1 Then
+              Return 0;
+            End If 
+            'PrintL "amount is: " + amt
+            Return RadToDeg ArcCos amt  
+        End Function
+    
+        ' meant for 2d vectors, rotates this vector, ignores z in 3d vectors
+        Function rot (angle As Single)
+            Single temp = Me.x
+            Me.x = Me.x * Cos ( angle ) - Me.y * Sin ( angle )
+            Me.y = temp * Sin ( angle ) + Me.y * Cos ( angle )
+        End Function
+
+        ' returns formatted string values of this vector
+        Function txt ( Optional numDecimals As Byte ) As String
+            If numDecimals = "" Then numDecimals = 6 
+            If Me.vec2 Then
+                Select Case numDecimals               
+                    Case 1
+                        Return Format$(Me.x, "#.0") + ", " + Format$(Me.y, "#.0")
+                    Case 2
+                        Return Format$(Me.x, "#.00") + ", " + Format$(Me.y, "#.00")
+                    Case 3
+                        Return Format$(Me.x, "#.000") + ", " + Format$(Me.y, "#.000")
+                    Case 4 
+                        Return Format$(Me.x, "#.0000") + ", " + Format$(Me.y, "#.0000")
+                    Case 5 
+                        Return Format$(Me.x, "#.00000") + ", " + Format$(Me.y, "#.00000")
+                    Case Else ' 6 and above default to 6
+                        Return Format$(Me.x, "#.000000") + ", " + Format$(Me.y, "#.000000")
+                End Select
+            Else
+                Select Case numDecimals               
+                    Case 1
+                        Return Format$(Me.x, "#.0") + ", " + Format$(Me.y, "#.0") + ", " + Format$(Me.z, "#.0") 
+                    Case 2
+                        Return Format$(Me.x, "#.00") + ", " + Format$(Me.y, "#.00") + ", " + Format$(Me.z, "#.00")
+                    Case 3
+                        Return Format$(Me.x, "#.000") + ", " + Format$(Me.y, "#.000") + ", " + Format$(Me.z, "#.000")
+                    Case 4 
+                        Return Format$(Me.x, "#.0000") + ", " + Format$(Me.y, "#.0000") + ", " + Format$(Me.z, "#.0000")
+                    Case 5 
+                        Return Format$(Me.x, "#.00000") + ", " + Format$(Me.y, "#.00000") + ", " + Format$(Me.z, "#.00000")
+                    Case Else ' 6 and above default to 6
+                        Return Format$(Me.x, "#.000000") + ", " + Format$(Me.y, "#.000000") + ", " + Format$(Me.z, "#.000000")
+                End Select 
+            EndIf
+        End Function
+        
+        ' prints formatted values of this vector
+        Function out ( Optional numDecimals As Byte ) As Boolean
+            If numDecimals = "" Then numDecimals = 6 
+            If Me.vec2 Then
+                Select Case numDecimals               
+                    Case 1
+                        PrintL Format$(Me.x, "#.0") + ", " + Format$(Me.y, "#.0")
+                    Case 2
+                        PrintL Format$(Me.x, "#.00") + ", " + Format$(Me.y, "#.00")
+                    Case 3
+                        PrintL Format$(Me.x, "#.000") + ", " + Format$(Me.y, "#.000")
+                    Case 4 
+                        PrintL Format$(Me.x, "#.0000") + ", " + Format$(Me.y, "#.0000")
+                    Case 5 
+                        PrintL Format$(Me.x, "#.00000") + ", " + Format$(Me.y, "#.00000")
+                    Case Else ' 6 and above default to 6
+                        PrintL Format$(Me.x, "#.000000") + ", " + Format$(Me.y, "#.000000")
+                End Select
+            Else
+                Select Case numDecimals               
+                    Case 1
+                        PrintL Format$(Me.x, "#.0") + ", " + Format$(Me.y, "#.0") + ", " + Format$(Me.z, "#.0") 
+                    Case 2
+                        PrintL Format$(Me.x, "#.00") + ", " + Format$(Me.y, "#.00") + ", " + Format$(Me.z, "#.00")
+                    Case 3
+                        PrintL Format$(Me.x, "#.000") + ", " + Format$(Me.y, "#.000") + ", " + Format$(Me.z, "#.000")
+                    Case 4 
+                        PrintL Format$(Me.x, "#.0000") + ", " + Format$(Me.y, "#.0000") + ", " + Format$(Me.z, "#.0000")
+                    Case 5 
+                        PrintL Format$(Me.x, "#.00000") + ", " + Format$(Me.y, "#.00000") + ", " + Format$(Me.z, "#.00000")
+                    Case Else ' 6 and above default to 6
+                        PrintL Format$(Me.x, "#.000000") + ", " + Format$(Me.y, "#.000000") + ", " + Format$(Me.z, "#.000000")
+                End Select 
+            EndIf 
+            Return TRUE
+        End Function 
+        
+        ' set the magnitude of this vector
+        Function setMag ( length As Single ) 
+            Me.nrmlz
+            Me.scl( length )   
+        End Function 
+        
+        ' set this vector to this angle
+        Function frmAngle ( angle As Single ) 
+            Me.eqls( Cos ( angle ), Sin ( angle ), 0 )  
+        End Function  
+End Type

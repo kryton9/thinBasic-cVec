@@ -1,0 +1,259 @@
+' cVec unit tests by kryton9 - Kent Sarikaya 2017
+
+Uses "Console"
+#INCLUDE "cVec.tbasicu" 
+' needs internet, but will use the latest version
+' #INCLUDE "https://raw.githubusercontent.com/kryton9/thinBasic-cVec/master/cVec.tbasicu"
+
+Type tTest
+    test As String
+    result As String    
+    Function txt ( ) As String 
+        String s = Me.test + $TAB + Me.result
+        Return s
+    End Function
+End Type
+Byte i 'used in for loops
+Byte numTests = 21
+
+Dim unitTests ( numTests ) As tTest
+String methods ( numTests )
+
+methods ( 1 ) = "cpy2", "cpyFrm", "eqls", "inc", "dec", "scl", "div", "dot", "dstnc", "cross",
+"limit", "mag", "nrmlz", "rndmz", "hdng", "angle", "rot", "txt", "out", "setMag", "frmAngle"
+
+
+For i = 1 To numTests 
+    unitTests ( i ).test   = methods ( i )
+    unitTests ( i ).result = "not developed or tested"  
+Next
+
+' Test 1 : cpy2
+Dim a As cVec 3, 4, 5 
+Dim b As cVec 1, 1, 1
+a.cpy2 b
+If b.x = 3 And b.y = 4 And b.z = 5 Then 
+    unitTests ( 1 ).result = "Passed"
+Else  
+    unitTests ( 1 ).result = "Failed" 
+End If
+
+' Test 2 : cpyFrm
+a.x = 3 : a.y = 4 : a.z = 5 
+b.x = 1 : b.y = 1 : b.z = 1
+a.cpyFrm b
+If a.x = 1 And a.y = 1 And a.z = 1 Then 
+    unitTests ( 2 ).result = "Passed"
+Else  
+    unitTests ( 2 ).result = "Failed" 
+End If
+
+' Test 3 : eqls
+a.eqls 3, 4, 5
+If a.x = 3 And a.y = 4 And a.z = 5 Then 
+    unitTests ( 3 ).result = "Passed"
+Else  
+    unitTests ( 3 ).result = "Failed" 
+End If
+
+' Test 4 : inc 
+a.x = 3 : a.y = 4 : a.z = 5 
+b.x = 1 : b.y = 1 : b.z = 1
+a.inc b
+If a.x = 4 And a.y = 5 And a.z = 6 Then 
+    unitTests ( 4 ).result = "Passed"
+Else  
+    unitTests ( 4 ).result = "Failed" 
+End If
+
+' Test 5 : dec
+a.x = 4 : a.y = 5 : a.z = 6 
+b.x = 1 : b.y = 1 : b.z = 1
+a.dec b
+If a.x = 3 And a.y = 4 And a.z = 5 Then 
+    unitTests ( 5 ).result = "Passed"
+Else  
+    unitTests ( 5 ).result = "Failed" 
+End If
+
+' Test 6 : scl 
+b.x = 1 : b.y = 1 : b.z = 1
+b.scl 5
+If b.x = 5 And b.y = 5 And b.z = 5 Then 
+    unitTests ( 6 ).result = "Passed"
+Else  
+    unitTests ( 6 ).result = "Failed" 
+End If
+
+' Test 7 : div 
+a.x = 9 : a.y = 12 : a.z = 15 
+a.div 3 
+If a.x = 3 And a.y = 4 And a.z = 5  Then 
+    unitTests ( 7 ).result = "Passed"
+Else  
+    unitTests ( 7 ).result = "Failed" 
+End If
+
+' Test 8 : dot
+a.x = 3 : a.y = 4 : a.z = 5 
+b.x = 7 : b.y = 8 : b.z = 9
+Single result = a.dot b 
+'PrintL result
+If result = 98 Then 
+    unitTests ( 8 ).result = "Passed"
+Else  
+    unitTests ( 8 ).result = "Failed" 
+End If
+
+' Test 9 : dstnc
+a.x = 3 : a.y = 4 : a.z = 5 
+b.x = 7 : b.y = 8 : b.z = 9
+result = a.dstnc b
+'PrintL result
+If result > 6.928202 And result < 6.928204 Then 
+    unitTests ( 9 ).result = "Passed"
+Else  
+    unitTests ( 9 ).result = "Failed" 
+End If
+
+' Test 10 : cross
+a.x = 3 : a.y = 4 : a.z = 5 
+b.x = 7 : b.y = 8 : b.z = 9 
+Dim c As cVec
+a.cross b, c
+If c.x = -4 And c.y = 8 And c.z = -4 Then 
+    unitTests ( 10 ).result = "Passed"
+Else  
+    unitTests ( 10 ).result = "Failed" 
+End If
+
+' Test 11 : limit 
+a.x = 10 : a.y = 20 : a.z = 30 
+a.limit 5.5
+'a.out
+If ( a.x > 1.469935 And a.x < 1.469937 ) And _
+   ( a.y > 2.939875 And a.y < 2.939877 ) And _ 
+   ( a.z > 4.409811 And a.z < 4.409813 ) Then  
+    unitTests ( 11 ).result = "Passed"
+Else  
+    unitTests ( 11 ).result = "Failed" 
+End If
+
+' Test 12 : mag
+a.x = 3 : a.y = 4 : a.z = 5 
+result = a.mag
+'PrintL result
+If result > 7.071067 And result < 7.071069 Then 
+    unitTests ( 12 ).result = "Passed"
+Else  
+    unitTests ( 12 ).result = "Failed" 
+End If
+
+' Test 13 : nrmlz
+a.x = 3 : a.y = 4 : a.z = 5 
+a.nrmlz  
+'a.out
+If ( a.x > 0.424263 And a.x < 0.424265 ) And _
+   ( a.y > 0.565684 And a.y < 0.565686 ) And _ 
+   ( a.z > 0.707106 And a.z < 0.707108 ) Then 
+    unitTests ( 13 ).result = "Passed"
+Else  
+    unitTests ( 13 ).result = "Failed" 
+End If
+
+' Test 14 : rndmz
+a.x = 9 : a.y = 12 : a.z = 15 
+a.rndmz 
+'a.out
+If a.x <> 9  And a.y <> 12 And a.z <> 15 Then 
+    unitTests ( 14 ).result = "Passed"
+Else  
+    unitTests ( 14 ).result = "Failed" 
+End If 
+
+' Test 15 : hdng
+' works only on 2d vectors, to use with 3d pass 0 for z
+Dim d As cVec 1, 3
+result = d.hdng 
+'PrintL result
+If result > 1.249044 And result <1.249046 Then 
+    unitTests ( 15 ).result = "Passed"
+Else  
+    unitTests ( 15 ).result = "Failed" 
+End If 
+
+' Test 16 : angle
+d.eqls 10, 20
+Dim e As cVec 60, 80
+result = d.angle e
+'PrintL result
+If result > 10.304845 And result < 10.304847 Then 
+    unitTests ( 16 ).result = "Passed"
+Else  
+    unitTests ( 16 ).result = "Failed" 
+End If
+
+' Test 17 : rot 
+' works only on 2d vectors, to use with 3d pass 0 for z
+d.eqls 10, 20
+d.rot (Pi / 2) 
+'d.out
+If d.x = -20.0 And d.y = 9.999999 Then 
+    unitTests ( 17 ).result = "Passed"
+Else  
+    unitTests ( 17 ).result = "Failed" 
+End If
+
+' Test 18 : txt
+a.x = 9 : a.y = 12 : a.z = 15 
+String s = ""
+s = a.txt
+If s <> "" Then
+    unitTests ( 18 ).result = "Passed"
+Else  
+    unitTests ( 18 ).result = "Failed" 
+End If
+
+' Test 19 : out
+a.x = 9 : a.y = 12 : a.z = 15
+Print "test 19 out: " 
+Boolean ok = a.out 
+PrintL
+If ok = TRUE Then
+    unitTests ( 19 ).result = "Passed"
+Else  
+    unitTests ( 19 ).result = "Failed" 
+End If 
+
+' Test 20 : setMag
+a.eqls 3, 4, 0
+a.setMag 10 
+If a.x = 6 And a.y = 8 And a.z = 0  Then 
+    unitTests ( 20 ).result = "Passed"
+Else  
+    unitTests ( 20 ).result = "Failed" 
+End If 
+
+' Test 21 : frmAngle
+a.frmAngle 45
+If ( a.x > 0.525321 And a.x < 0.525323 ) And _
+   ( a.y > 0.850903 And a.y < 0.850905 ) Then 
+    unitTests ( 21 ).result = "Passed"
+Else  
+    unitTests ( 21 ).result = "Failed" 
+End If
+
+Byte displayColor
+For i = 1 To numTests
+    displayColor = %CCOLOR_FGRAY
+    If unitTests ( i ).result = "Passed" Then
+        displayColor = %CCOLOR_FLIGHTGREEN
+    ElseIf unitTests ( i ).result = "Failed" Then
+        displayColor = %CCOLOR_FLIGHTRED
+    EndIf
+    PrintL "test: " + i + " " + unitTests ( i ).txt In displayColor 
+Next 
+
+PrintL
+PrintL "Press a key to end program"
+WaitKey

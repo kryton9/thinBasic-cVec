@@ -1,0 +1,32 @@
+' cVec test out method by kryton9 - Kent Sarikaya 2017
+Uses "Console"
+#INCLUDE "cVec.tbasicu" 
+' needs internet, but will use the latest version
+' #INCLUDE "https://raw.githubusercontent.com/kryton9/thinBasic-cVec/master/cVec.tbasicu"  
+
+' a 3d vector
+Dim t As cVec 10.12345678, 23.12345678, 5.12345678 
+PrintL "Testing out function for 3d vectors"
+t.out   ' no parameters prints default 2 decimals, x and y and z 
+t.out 1 ' prints 1 decimal,  x and y and z
+t.out 2 ' prints 2 decimals, x and y and z
+t.out 3 ' prints 3 decimals, x and y and z
+t.out 4 ' prints 4 decimals, x and y and z
+t.out 5 ' prints 5 decimals, x and y and z 
+PrintL
+PrintL
+
+' a 2d vector
+Dim p As cVec 2.12345678, 12.12345678 
+PrintL "Testing out function for 2d vectors"
+p.out   ' no parameters prints default 2 decimals, x and y
+p.out 1 ' prints 1 decimal,  x and y
+p.out 2 ' prints 2 decimals, x and y
+p.out 3 ' prints 3 decimals, x and y
+p.out 4 ' prints 4 decimals, x and y
+p.out 5 ' prints 5 decimals, x and y
+PrintL
+
+
+PrintL "Press a key to end program"
+WaitKey
